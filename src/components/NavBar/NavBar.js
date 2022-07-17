@@ -12,6 +12,7 @@ const NavBar = () => {
             <Nav.Link href="#home">Home</Nav.Link>
             <Nav.Link href="#products">Products</Nav.Link>
             <Nav.Link href="#community">Community</Nav.Link>
+            <Nav.Link href="#community">Contact Us</Nav.Link>
         </Nav>
     </Container>
    </Navbar>
