@@ -11,7 +11,7 @@ function App() {
   return (
     <div className="App">
         <NavBar />
-        <ItemListContainer saludo="Welcome to ElectricHQ"/>
+        <ItemListContainer saludo="welcome to electricHQ"/>
     </div>
   );
 }
