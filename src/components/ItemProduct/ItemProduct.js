@@ -23,7 +23,7 @@ const ItemProduct = ({data}) => {
         </Card.Text>
         <Button variant="warning">Add To Cart</Button>
       </Card.Body>
-      <ItemCount stock={data.stock}/>
+      <ItemCount inicial="1" stock={data.stock}/>
     </Card>
   
 )}

@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react';
 import './ItemCount.css';
 
 
-const ItemCount = ({stock}) =>{
+const ItemCount = ({inicial, stock}) =>{
 
 
-   
-    const [contador, setContador] = useState(1)
+   console.log("llega ", inicial);
+    const [contador, setContador] = useState(inicial)
 
 
     const addNumber = () => {
