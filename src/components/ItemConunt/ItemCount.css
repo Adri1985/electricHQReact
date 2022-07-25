@@ -1,0 +1,17 @@
+.quantity{
+   
+        display: flex;
+        /* height: 77px; */
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+    
+}
+.quantity button{
+    margin:5px;
+
+}
+.quantity p{
+    text-align: center;
+    justify-content: center;
+}
