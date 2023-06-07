@@ -7,13 +7,16 @@ import Modal from "../Modal/Modal";
 import db from "../../utils/firebaseConfig";
 import { collection, addDoc, updateDoc, doc, getDoc } from "firebase/firestore";
 import emailjs from "@emailjs/browser";
+import Payment from '../../pages/Payment'
 
 const Cart = () => {
   const navigate = useNavigate();
-  const { clear, cartProducts,setCartProducts, totalPrice, setTotalPrice, getUser, orderID, setOrderID } =
+  const { clear, getOrderDetails,cartProducts,setCartProducts, totalPrice, setTotalPrice, getUser, orderDetails, setOrderDetails } =
     useContext(CartContext);
   const [showModal, setShowModal] = useState(false);
+  const [showPayment, setShowPayment] = useState(false)
   const [success, setSuccess] = useState();
+  const [order, setOrder] = useState({})
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -60,9 +63,9 @@ const Cart = () => {
   };
   const submitData = (e) => {
     e.preventDefault();
-    setTimeout(() => {
+   
         pushData();
-    }, 4000);
+  
   };
    
   
@@ -85,10 +88,12 @@ const Cart = () => {
      console.log("response del backend", json.orderID)
      console.log("user en context", getUser())
      setCartProducts({_id:getUser().cart, products:json.cart.returnCartProducts}) 
-     alert("Orden Generada, ID de su orden: "+json.orderID)
-     setOrderID(json.orderDetails)
+     alert("Orden Generada, ID de su orden, la misma esta pendiente de pago"+json.orderID)
+     console.log("order details", json.orderDetails)
+     setOrder(json.orderDetails)
+     console.log("context order details ", getOrderDetails())
      //console.log('result', result)
-     navigate("/Stripe");
+     //navigate("/Payment");
  
      //const userCart = setUserCart(json.user.cart)
      
@@ -99,53 +104,18 @@ const Cart = () => {
   
 
   const pushData = async () => {
-    submitOrder()
+    await submitOrder()
     console.log("ORDEN GENERADA");
     //al confirmar la orden se actualiza el stock de los productos del carrito
 
     //sendmail();
     //fin limpio carrito
     //muestro la orden por un momento y vuelvo a la pantalla de compra
-    setTimeout(() => {
+   
       setShowModal(false);
-    }, 4000);
+      setShowPayment(true)
   };
-  const sendmail = () => {
-    let titulo = "Detalle de su compra: ";
-    let resumen = "";
-    for (const producto of orden.items) {
-      resumen =
-        resumen +
-        producto.title +
-        "X " +
-        producto.cant +
-        "\nPrecio: " +
-        producto.precio +
-        "$     /";
-    }
-    resumen = resumen + "\n";
-    let total = "Total de su compra: $" + orden.totalCompra;
-    let saludo = "Equipo de ElectricHQ";
-    var templateParams = {
-      correo: formData.email,
-      from: formData.name,
-      title: titulo,
-      mensaje: resumen,
-      totals: total,
-      greeting: saludo,
-    };
-    emailjs.init("WMpHeNMelJs9E2A6N");
-
-    //send email
-    emailjs.send("default_service", "template_3lckjpo", templateParams).then(
-      function (response) {
-        console.log("SUCCESS!", response.status, response.text);
-      },
-      function (error) {
-        console.log("FAILED...", error);
-      }
-    );
-  };
+  
   const getProduct = async (id) => {
     const docRef = doc(db, "productos", id);
     const docSnapshot = await getDoc(docRef);
@@ -186,6 +156,8 @@ const Cart = () => {
 
   return (
     <div className="Container">
+      {!showPayment &&
+      (<>
       <h1>YOUR SUMMARY</h1>
       {cartProducts.products.map((product) => {
         return <CheckOutItem key={product.id} data={product} />;
@@ -198,6 +170,7 @@ const Cart = () => {
           GO TO PAYMENT
         </button>
       </div>
+      </>)}
       {showModal && (
         <Modal title="CONTACT INFORMATION" close={() => handleClose()}>
           {success ? (
@@ -249,11 +222,15 @@ const Cart = () => {
                 onChange={handleChange}
                 value={`${getUser().email}`}
               ></input>
+              
               <button type="submit">Enviar</button>
             </form>
           )}
         </Modal>
       )}
+       {console.log("orden antes de payment ", order)}
+      {showPayment && (<Payment orderTotal={order.totalPrice}></Payment>)}
+
     </div>
   );
 };

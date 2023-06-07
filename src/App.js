@@ -5,6 +5,7 @@ import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Detail from './pages/Detail';
 import Products from './pages/Products';
 import Cart from './pages/Checkout';
+import Payment from './pages/Payment'
 import CreateProduct from './pages/CreateProduct';
 import CartProvider from './context/CartContext';
 import Login from './pages/Login'
@@ -34,7 +35,7 @@ function App() {
               <Route path ="/Checkout" element ={<Cart/>} />
               <Route path ="/productos/create" element = {<CreateProduct />}/>
               <Route path="*" element={<h1>Error 404 pagina no encontrada</h1>}/>
-              <Route path='/stripe' element={<Stripe />} />
+              <Route path='/Payment' element={<Payment />} />
 
             
             </Routes>

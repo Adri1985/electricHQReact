@@ -8,7 +8,7 @@ const CartProvider = ({ children }) => {
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [user, setUser] = useState({});
-  const [orderID, setOrderID] = useState('');
+  const [orderDetails, setOrderDetails] = useState({});
 
   const clearOne = async (product) => {
     // let cart = {_id: cartProducts._id, products:[]}
@@ -118,6 +118,10 @@ const CartProvider = ({ children }) => {
     return user;
   };
 
+  const getOrderDetails = () =>{
+    return orderDetails
+  }
+
   //necesitaba en el caso de actualizar la cantidad, que se ejecute nuevamente setCartProducts
   //para que me vuelva a renderizar el CartWidget. Modificando el array original no lo tomaba
   //por ende tuve que crear una copia del array y llamar al setCartProducts con la copia.
@@ -190,8 +194,9 @@ const CartProvider = ({ children }) => {
     getUser,
     setCart,
     setCartProducts,
-    orderID,
-    setOrderID
+    orderDetails,
+    setOrderDetails,
+    getOrderDetails
   };
 
   return <CartContext.Provider value={data}>{children}</CartContext.Provider>;
