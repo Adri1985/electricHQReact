@@ -34,7 +34,8 @@ const Userlogin = ({ title }) => {
   const login = async () => {
     console.log("antes del post!!!!")
     const { email, password } = formData;
-    await fetch("https://ehqbackend-production.up.railway.app/api/session/login", {
+    //await fetch("https://ehqbackend-production.up.railway.app/api/session/login", {
+      await fetch("https://ehqbackend-production.up.railway.app/api/session/login", {
   method: "POST",
   body: JSON.stringify({
     email: formData.email,
@@ -114,7 +115,7 @@ const gtiHubLogin = async ()=>{
     });
 
     console.log("result de register", register)
-    setAction('login')
+    changeAction()
     navigate("/electricHQReact");
   };
 

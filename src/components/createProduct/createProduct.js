@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const CreateProduct = ({title}) =>{
-
+    const navigate = useNavigate()
     const [formData, setFormData] = useState({
         marca: "",
         modelo: "",
@@ -16,6 +18,8 @@ const CreateProduct = ({title}) =>{
         onCart:""
       });
 
+      const [imageName, setImageName] = useState('')
+
       const [auth, setAuth] = useState({error:""})
 
       const handleChange = (e) => {
@@ -23,30 +27,54 @@ const CreateProduct = ({title}) =>{
         console.log("formData", formData);
       };
 
-      const create = async () => {
-        console.log("antes del post create!!!!")
-        await fetch("https://ehqbackend-production.up.railway.app/api/products", {
-      method: "POST",
-      body: JSON.stringify({
-       formData,
-      }),
-      headers: {
-        "Content-type":"application/json",
-        "Authorization":localStorage.getItem('authToken')
-      }
-    })
-      .then((response) => response.json())
-      .then((json) => {
-         console.log("response del login", json)
-         setAuth(json)
+      const submitProduct = async () => {
+
+        const newForm = new FormData()
+        console.log("antes del post!!!!")
+        newForm.append('marca', formData.marca);
+        newForm.append('modelo',formData.modelo)
+        newForm.append('tipo',formData.tipo)
+        newForm.append('rango',formData.rango)
+        newForm.append('topFeature1',formData.topFeature1)
+        newForm.append('topFeature2',formData.topFeature2)
+        newForm.append('topFeature3',formData.topFeature3)
+        newForm.append('stock',formData.stock)
+        newForm.append('imageName', imageName)
+        console.log("form data con product", newForm)
+        const result = axios.post(`https://ehqbackend-production.up.railway.app/api/products`, 
+        newForm,
+        {headers: {
+            "Content-Type": "multipart/form-data"//,
+            //"Authorization":localStorage.getItem('authToken')
+      }}
+    )
+      .then((response) => {
+        console.log("response data update product",response.data)
        
-       //  updUser(json.user)
-         
+        if(response.data){
+           alert('product added')
+           console.log(response.data)
+          addProductToStore(response.data._id)
+        } 
+        navigate("/productos");
       })
-        //console.log("user en context", getUser())
-        //console.log('result', result)
-        //navigate("/productos");
-    };
+    }
+
+    const addProductToStore = async (pid) => {
+
+    
+      
+      const result = axios.post(`https://ehqbackend-production.up.railway.app/api/stores/64222c92b498abd05d5c8aac/products/${pid}`, 
+      {headers: {
+          "Content-Type": "multipart/form-data",
+    }}
+  )
+    .then((response) => {
+      console.log("response data update product",response.data)
+      response.data && alert('product added to Store')
+      navigate("/productos");
+    })
+  }
 
     return(
         <section className="vh-100 gradient-custom">
@@ -165,32 +193,6 @@ const CreateProduct = ({title}) =>{
                   </div>
                   <div className="form-outline form-white mb-4">
                     <input
-                      type="imageName"
-                      id="imageName"
-                      name="imageName"
-                      className="form-control form-control-lg"
-                      value={formData.imageName}
-                      onChange={handleChange}
-                    />
-                    <label className="form-label" for="typeimageNameX">
-                      imageName
-                    </label>
-                  </div>
-                  <div className="form-outline form-white mb-4">
-                    <input
-                      type="liked"
-                      id="liked"
-                      name="liked"
-                      className="form-control form-control-lg"
-                      value={formData.liked}
-                      onChange={handleChange}
-                    />
-                    <label className="form-label" for="typelikedX">
-                      liked
-                    </label>
-                  </div>
-                  <div className="form-outline form-white mb-4">
-                    <input
                       type="stock"
                       id="stock"
                       name="stock"
@@ -202,22 +204,19 @@ const CreateProduct = ({title}) =>{
                       stock
                     </label>
                   </div>
-
                   <div className="form-outline form-white mb-4">
-                    <input
-                      type="onCart"
-                      id="onCart"
-                      name="onCart"
-                      className="form-control form-control-lg"
-                      value={formData.onCart}
-                      onChange={handleChange}
-                    />
-                    <label className="form-label" for="typeonCartX">
-                      onCart
-                    </label>
-                  </div>
-               
-        
+                      <input
+                        type="file"
+                        id="imageName"
+                        name="imageName"
+                        //value="IMG"
+                        className="form-control form-control-lg"
+                        onChange={(e)=> setImageName(e.target.files[0])} 
+                      />
+                      <label className="form-label" for="typeEmailX">
+                        Upload Image
+                      </label>
+                    </div>
                 </div>
                
                   <p className="mb-0">
@@ -225,7 +224,7 @@ const CreateProduct = ({title}) =>{
                     <button
                       className="btn btn-outline-light btn-sm px-5"
                       type="submit"
-                      onClick={create}
+                      onClick={submitProduct}
                     >
                      CREATE PRODUCT
                     </button>
